@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
+	"net/http/httputil"
 	"net/url"
 )
 
@@ -25,8 +26,8 @@ func main() {
 		{URL: backend2, Alive: true},
 	}
 
-	for _, backend := range backends {
-		fmt.Println(backend.URL.String(), backend.Alive)
-	}
+	target := backends[0].URL
+	proxy := httputil.NewSingleHostReverseProxy(target)
 
+	http.ListenAndServe(":8080", proxy)
 }
