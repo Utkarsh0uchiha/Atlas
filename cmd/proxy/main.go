@@ -8,8 +8,7 @@ import (
 )
 
 type Backend struct {
-	URL   *url.URL
-	Alive bool
+	URL *url.URL
 }
 
 func main() {
@@ -18,8 +17,7 @@ func main() {
 		panic(err)
 	}
 	backend := Backend{
-		URL:   backendURL,
-		Alive: true,
+		URL: backendURL,
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(backend.URL)
