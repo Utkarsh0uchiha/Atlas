@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -20,10 +21,13 @@ func main() {
 		URL:   backendURL,
 		Alive: true,
 	}
+	if !backend.Alive {
+		panic("backend is not alive")
+	}
 
 	proxy := httputil.NewSingleHostReverseProxy(backend.URL)
 
 	if err := http.ListenAndServe(":8080", proxy); err != nil {
-		panic(err)
+		panic(fmt.Sprintf("failed to start proxy server on port 8080: %v", err))
 	}
 }
