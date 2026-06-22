@@ -6,7 +6,7 @@ import (
 )
 
 type Backend struct {
-	URL *url.URL
+	URL   *url.URL
 	Alive bool
 }
 
@@ -24,9 +24,9 @@ func main() {
 		{URL: backend1, Alive: true},
 		{URL: backend2, Alive: true},
 	}
-	
+
 	for _, backend := range backends {
 		fmt.Println(backend.URL.String(), backend.Alive)
 	}
-	
+
 }
