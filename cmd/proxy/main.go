@@ -12,22 +12,18 @@ type Backend struct {
 }
 
 func main() {
-	backend1, err := url.Parse("http://localhost:8081")
+	backendURL, err := url.Parse("http://localhost:8081")
 	if err != nil {
 		panic(err)
 	}
-	backend2, err := url.Parse("http://localhost:8082")
-	if err != nil {
+	backend := Backend{
+		URL:   backendURL,
+		Alive: true,
+	}
+
+	proxy := httputil.NewSingleHostReverseProxy(backend.URL)
+
+	if err := http.ListenAndServe(":8080", proxy); err != nil {
 		panic(err)
 	}
-
-	backends := []Backend{
-		{URL: backend1, Alive: true},
-		{URL: backend2, Alive: true},
-	}
-
-	target := backends[0].URL
-	proxy := httputil.NewSingleHostReverseProxy(target)
-
-	http.ListenAndServe(":8080", proxy)
 }
