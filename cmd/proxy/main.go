@@ -1,13 +1,33 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
+	"net/http/httputil"
 	"net/url"
 )
 
 type Backend struct {
 	URL   *url.URL
 	Alive bool
+}
+type LoadBalancer struct {
+	Backends []Backend
+	Current  int
+}
+
+func (lb *LoadBalancer) NextBackend() Backend {
+	current := lb.Current
+
+	lb.Current = (current + 1) % len(lb.Backends)
+	return lb.Backends[current]
+}
+
+func (lb *LoadBalancer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	backend := lb.NextBackend()
+
+	proxy := httputil.NewSingleHostReverseProxy(backend.URL)
+
+	proxy.ServeHTTP(w, r)
 }
 
 func main() {
@@ -25,8 +45,11 @@ func main() {
 		{URL: backend2, Alive: true},
 	}
 
-	for _, backend := range backends {
-		fmt.Println(backend.URL.String(), backend.Alive)
+	lb := LoadBalancer{
+		Backends: backends,
+		Current:  0,
 	}
+
+	http.ListenAndServe(":8080", &lb)
 
 }
