@@ -1,9 +1,11 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 )
 
 type Backend struct {
@@ -15,16 +17,48 @@ type LoadBalancer struct {
 	Current  int
 }
 
-func (lb *LoadBalancer) NextBackend() Backend {
-	current := lb.Current
+func (lb *LoadBalancer) HealthCheck() {
+	for i := range lb.Backends {
+		resp, err := http.Get(lb.Backends[i].URL.String())
+		if err != nil {
+			lb.Backends[i].Alive = false
+			continue
+		}
+		if resp.StatusCode == http.StatusOK {
+			lb.Backends[i].Alive = true
+		} else {
+			lb.Backends[i].Alive = false
+		}
 
-	lb.Current = (current + 1) % len(lb.Backends)
-	return lb.Backends[current]
+		resp.Body.Close()
+	}
+}
+
+func (lb *LoadBalancer) NextBackend() (Backend, error) {
+
+	n := len(lb.Backends)
+
+	for i := 0; i < n; i++ {
+
+		idx := (lb.Current + i) % n
+
+		if lb.Backends[idx].Alive {
+			lb.Current = (idx + 1) % n
+
+			return lb.Backends[idx], nil
+		}
+	}
+
+	return Backend{}, errors.New("no healthy backends available")
+
 }
 
 func (lb *LoadBalancer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	backend := lb.NextBackend()
-
+	backend, err := lb.NextBackend()
+	if err != nil {
+		http.Error(w, "No healthy backends available", http.StatusServiceUnavailable)
+		return
+	}
 	proxy := httputil.NewSingleHostReverseProxy(backend.URL)
 
 	proxy.ServeHTTP(w, r)
@@ -50,7 +84,15 @@ func main() {
 		Current:  0,
 	}
 
-	http.ListenAndServe(":8080", &lb)
-
+	go func() {
+		ticker := time.NewTicker(5 * time.Second)
+		defer ticker.Stop()
+		for range ticker.C {
+			lb.HealthCheck()
+		}
+	}()
+	lb.HealthCheck()
+	if err := http.ListenAndServe(":8080", &lb); err != nil {
+		panic(err)
+	}
 }
-
