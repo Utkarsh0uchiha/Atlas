@@ -1,10 +1,15 @@
 package balancer
 
-import "github.com/Utkarsh0uchiha/go-load-balancer/internal/backend"
+import (
+	"github.com/Utkarsh0uchiha/go-load-balancer/internal/backend"
+	"sync"
+)
 
 type LoadBalancer struct {
 	Backends []backend.Backend
 	Current  int
+
+	mu sync.RWMutex
 }
 
 func New(backend []backend.Backend) *LoadBalancer{
