@@ -9,7 +9,8 @@ import (
 func (lb *LoadBalancer) NextBackend() (backend.Backend, error) {
 
 	n := len(lb.Backends)
-
+	lb.mu.Lock()
+	defer lb.mu.Unlock()
 	for i := 0; i < n; i++ {
 
 		idx := (lb.Current + i) % n

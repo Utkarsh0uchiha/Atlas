@@ -3,19 +3,22 @@ package balancer
 import (
 	"net/http"
 )
+
 func (lb *LoadBalancer) HealthCheck() {
+
 	for i := range lb.Backends {
 		resp, err := http.Get(lb.Backends[i].URL.String())
+
+		Alive := false
 		if err != nil {
-			lb.Backends[i].Alive = false
-			continue
-		}
-		if resp.StatusCode == http.StatusOK {
-			lb.Backends[i].Alive = true
-		} else {
-			lb.Backends[i].Alive = false
+			Alive = resp.StatusCode == http.StatusOK
+
+			resp.Body.Close()
 		}
 
-		resp.Body.Close()
+		lb.mu.Lock()
+		lb.Backends[i].Alive = Alive
+		lb.mu.Unlock()
+
 	}
 }
