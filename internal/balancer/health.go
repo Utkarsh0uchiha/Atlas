@@ -7,10 +7,10 @@ import (
 func (lb *LoadBalancer) HealthCheck() {
 
 	for i := range lb.Backends {
-		resp, err := http.Get(lb.Backends[i].URL.String())
+		resp, err := lb.client.Get(lb.Backends[i].URL.String() + "/health")
 
 		Alive := false
-		if err != nil {
+		if err == nil {
 			Alive = resp.StatusCode == http.StatusOK
 
 			resp.Body.Close()
