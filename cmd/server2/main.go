@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -14,5 +15,8 @@ func healthhandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/health", healthhandler)
+	http.HandleFunc("/kill", func(w http.ResponseWriter, r *http.Request) {
+    	os.Exit(1)
+	})
 	http.ListenAndServe(":8082", nil)
 }
