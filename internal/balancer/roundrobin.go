@@ -6,7 +6,7 @@ import (
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/backend"
 )
 
-func (lb *LoadBalancer) NextBackend() (backend.Backend, error) {
+func (lb *LoadBalancer) NextBackend() (backend.Backend, int, error) {
 
 	n := len(lb.Backends)
 	lb.mu.Lock()
@@ -18,10 +18,10 @@ func (lb *LoadBalancer) NextBackend() (backend.Backend, error) {
 		if lb.Backends[idx].Alive {
 			lb.Current = (idx + 1) % n
 
-			return lb.Backends[idx], nil
+			return lb.Backends[idx], idx, nil
 		}
 	}
 
-	return backend.Backend{}, errors.New("no healthy backends available")
+	return backend.Backend{}, -1, errors.New("503, Service Unavailable")
 
 }
