@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"time"
-
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/backend"
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/balancer"
 )
@@ -27,7 +27,9 @@ func main() {
 	lb := balancer.New(backends)
 	lb.HealthCheck()
 	lb.StartHealthChecker(5 * time.Second)
-	if err := http.ListenAndServe(":8080", lb); err != nil {
-		panic(err)
-	}
+	http.Handle("/", lb)
+	http.Handle("/metrics", promhttp.Handler())
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+	panic(err)
+}
 }

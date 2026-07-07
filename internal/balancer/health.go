@@ -2,10 +2,12 @@ package balancer
 
 import (
 	"net/http"
+
+	"github.com/Utkarsh0uchiha/go-load-balancer/internal/metrics"
 )
 
 func (lb *LoadBalancer) HealthCheck() {
-
+	healthy := 0
 	for i := range lb.Backends {
 		resp, err := lb.client.Get(lb.Backends[i].URL.String() + "/health")
 
@@ -20,5 +22,11 @@ func (lb *LoadBalancer) HealthCheck() {
 		lb.Backends[i].Alive = alive
 		lb.mu.Unlock()
 
+		if alive {
+			healthy++
+		}
+
 	}
+
+	metrics.HealthyBackends.Set(float64(healthy))
 }
