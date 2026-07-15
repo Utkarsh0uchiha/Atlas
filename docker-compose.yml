@@ -1,0 +1,26 @@
+services:
+  server1:
+    build:
+      context: .
+      dockerfile: cmd/server1/Dockerfile
+    ports:
+      - "8081:8081"
+  server2:
+    build:
+      context: .
+      dockerfile: cmd/server2/Dockerfile
+    ports:
+      - "8082:8082"
+
+  proxy:
+    build:
+      context: .
+      dockerfile: cmd/proxy/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server1
+      - server2
+    environment: 
+      BACKEND_1: "http://server1:8081" 
+      BACKEND_2: "http://server2:8082"
