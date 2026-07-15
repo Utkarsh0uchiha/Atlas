@@ -3,25 +3,34 @@ package main
 import (
 	"net/http"
 	"net/url"
+	"os"
 	"time"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/backend"
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/balancer"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
-	backend1, err := url.Parse("http://localhost:8081")
+	backend1 := os.Getenv("BACKEND_1")
+	if backend1 == "" {
+		backend1 = "http://localhost:8081"
+	}
+	backend2 := os.Getenv("BACKEND_2")
+	if backend2 == "" {
+		backend2 = "http://localhost:8082"
+	}
+	b1url, err := url.Parse(backend1)
 	if err != nil {
 		panic(err)
 	}
-	backend2, err := url.Parse("http://localhost:8082")
+	b2url, err := url.Parse(backend2)
 	if err != nil {
 		panic(err)
 	}
-
 	backends := []backend.Backend{
-		{URL: backend1, Alive: true},
-		{URL: backend2, Alive: true},
+		{URL: b1url, Alive: true},
+		{URL: b2url, Alive: true},
 	}
 
 	lb := balancer.New(backends)
@@ -30,6 +39,6 @@ func main() {
 	http.Handle("/", lb)
 	http.Handle("/metrics", promhttp.Handler())
 	if err := http.ListenAndServe(":8080", nil); err != nil {
-	panic(err)
-}
+		panic(err)
+	}
 }
