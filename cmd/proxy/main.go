@@ -20,6 +20,11 @@ func main() {
 	if backend2 == "" {
 		backend2 = "http://localhost:8082"
 	}
+
+	backend3 := os.Getenv("BACKEND_3")
+	if backend3 == "" {
+		backend3 = "http://localhost:8083"
+	}
 	b1url, err := url.Parse(backend1)
 	if err != nil {
 		panic(err)
@@ -28,9 +33,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	b3url, err := url.Parse(backend3)
+	if err != nil {
+		panic(err)
+	}
 	backends := []backend.Backend{
 		{URL: b1url, Alive: true},
 		{URL: b2url, Alive: true},
+		{URL: b3url, Alive: true},
 	}
 
 	lb := balancer.New(backends)
