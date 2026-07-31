@@ -143,7 +143,7 @@ Once deployed, the following services are available.
 
 ### Docker Compose Services
 
-![Docker Compose Services](docs/images/docker-compose-services.png)
+![Docker Compose Services](https://github.com/Utkarsh0uchiha/go-load-balancer/blob/main/docs/image/docker-compose-services.png?raw=true)
 ---
 
 # Docker Compose Architecture
