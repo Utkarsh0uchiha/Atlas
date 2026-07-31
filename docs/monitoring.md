@@ -55,7 +55,7 @@ The included Grafana dashboard provides real-time insights into system behavior.
 
 Displays the number of healthy backend servers currently participating in request routing.
 
-> ![Healthy Backends](docs/images/healthy-backends.jpg)
+![Healthy Backends](https://github.com/Utkarsh0uchiha/go-load-balancer/blob/main/docs/image/healthy-backends.jpg?raw=true)
 
 ---
 
@@ -63,7 +63,7 @@ Displays the number of healthy backend servers currently participating in reques
 
 Shows the incoming request throughput (requests/second).
 
-> ![Request Rate](docs/images/request-rate.jpg)
+![Request Rate](https://github.com/Utkarsh0uchiha/go-load-balancer/blob/main/docs/image/request-rate.jpg?raw=true)
 
 ---
 
@@ -71,7 +71,7 @@ Shows the incoming request throughput (requests/second).
 
 Visualizes how requests are distributed across backend servers.
 
-> ![Backend Request Distribution](docs/images/backend-request-distribution.jpg)
+![Backend Request Distribution](https://github.com/Utkarsh0uchiha/go-load-balancer/blob/main/docs/image/backend-request-distribution.jpg?raw=true)
 
 ---
 
@@ -79,4 +79,4 @@ Visualizes how requests are distributed across backend servers.
 
 Tracks the 95th percentile request latency, helping identify performance regressions.
 
-> ![P95 Request Latency](docs/images/p95-latency.jpg)
+![P95 Request Latency](https://github.com/Utkarsh0uchiha/go-load-balancer/blob/main/docs/image/p95-latency.jpg?raw=true)
