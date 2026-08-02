@@ -55,17 +55,15 @@ The project was built to gain hands-on experience with backend infrastructure, d
 
 ## 📖 Table of Contents
 
-- [Why Atlas?](#-why-atlas)
-- [Features](#-features)
-- [Architecture](#-architecture)
+- [Why Atlas?](#why-atlas)
+- [Features](#features)
+- [Architecture](#%EF%B8%8F-architecture)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
-- [Core Features](#-core-features)
+- [Core Features](#%EF%B8%8F-core-features)
 - [Getting Started](#-getting-started)
-- [Monitoring & Metrics](#-monitoring-metrics)
-- [Grafana Dashboard](#-grafana-dashboard)
-- [Benchmarks](#-benchmarks)
-- [Roadmap](#-roadmap)
+- [Documentation](#-documentation)
+- [Roadmap](#%EF%B8%8F-roadmap)
 - [Contributing](#-contributing)
 - [License](#-license)
 
