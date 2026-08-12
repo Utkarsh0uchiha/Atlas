@@ -1,6 +1,7 @@
 package main
 
 import (
+	"html/template"
 	"net/http"
 	"net/url"
 	"os"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/backend"
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/balancer"
+	"github.com/Utkarsh0uchiha/go-load-balancer/internal/handlers"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -44,10 +46,16 @@ func main() {
 		{URL: b3url, Alive: true},
 	}
 
+	tmpl, err := template.ParseFiles("web/templates/dashboard.html")
+	if err != nil {
+		panic(err)
+	}
+
 	lb := balancer.New(backends)
 	lb.HealthCheck()
 	lb.StartHealthChecker(5 * time.Second)
 	http.Handle("/", lb)
+	http.HandleFunc("/dashboard", handlers.NewDashboardHandler(tmpl))
 	http.Handle("/metrics", promhttp.Handler())
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
