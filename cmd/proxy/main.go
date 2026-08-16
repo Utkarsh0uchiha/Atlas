@@ -54,9 +54,17 @@ func main() {
 	lb := balancer.New(backends)
 	lb.HealthCheck()
 	lb.StartHealthChecker(5 * time.Second)
+
+	filesystem := http.Dir("web/static")
+
+	fileserver := http.FileServer(filesystem)
+
+	handler := http.StripPrefix("/static", fileserver)
+
 	http.Handle("/", lb)
 	http.HandleFunc("/dashboard", handlers.NewDashboardHandler(tmpl))
 	http.Handle("/metrics", promhttp.Handler())
+	http.Handle("/static/", handler)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
