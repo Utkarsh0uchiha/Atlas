@@ -1,10 +1,80 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Atlas Dashboard</title>
-    </head>
-    <body>
-        <h1>Atlas Dashboard</h1>
-        <p>Dashboard coming soon</p>
-    </body>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas — Load Balancer Dashboard</title>
+<link rel = "stylesheet" href = "/static/css/style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>Atlas</h1>
+    </div>
+    <p>Round-robin load balancer — live traffic overview</p>
+  </header>
+
+  <section>
+    <div class="section-title">Overview</div>
+    <div class="overview-grid">
+      <div class="stat">
+        <div class="label">Total Requests</div>
+        <div class="value placeholder">--</div>
+      </div>
+      <div class="stat">
+        <div class="label">Healthy Backends</div>
+        <div class="value placeholder">--</div>
+      </div>
+      <div class="stat">
+        <div class="label">Algorithm</div>
+        <div class="value">Round Robin</div>
+      </div>
+      <div class="stat">
+        <div class="label">Uptime</div>
+        <div class="value placeholder">--</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">Backends</div>
+    <div class="backends-grid">
+
+      <div class="backend-card">
+        <div class="title-row">
+          <span class="name">Backend 1</span>
+          <span class="status healthy"><span class="indicator"></span>Healthy</span>
+        </div>
+        <div class="row"><span>Requests</span><span>--</span></div>
+        <div class="row"><span>Latency</span><span>--</span></div>
+      </div>
+
+      <div class="backend-card">
+        <div class="title-row">
+          <span class="name">Backend 2</span>
+          <span class="status healthy"><span class="indicator"></span>Healthy</span>
+        </div>
+        <div class="row"><span>Requests</span><span>--</span></div>
+        <div class="row"><span>Latency</span><span>--</span></div>
+      </div>
+
+      <div class="backend-card">
+        <div class="title-row">
+          <span class="name">Backend 3</span>
+          <span class="status unhealthy"><span class="indicator"></span>Unhealthy</span>
+        </div>
+        <div class="row"><span>Requests</span><span>--</span></div>
+        <div class="row"><span>Latency</span><span>--</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>Atlas Load Balancer Dashboard</footer>
+
+</div>
+</body>
 </html>
