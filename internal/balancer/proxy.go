@@ -42,6 +42,9 @@ func (lb *LoadBalancer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		metrics.RequestDuration.Observe(time.Since(start).Seconds())
 	}()
+	lb.mu.Lock()
+	lb.totalRequests++
+	lb.mu.Unlock()
 	metrics.RequestsTotal.Inc()
 	backend, idx, err := lb.NextBackend()
 	if err != nil {
