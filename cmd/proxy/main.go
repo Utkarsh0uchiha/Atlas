@@ -55,6 +55,7 @@ func main() {
 	lb.HealthCheck()
 	lb.StartHealthChecker(5 * time.Second)
 
+	statusHandler := handlers.NewStatusHandler(lb)
 	filesystem := http.Dir("web/static")
 
 	fileserver := http.FileServer(filesystem)
@@ -65,6 +66,7 @@ func main() {
 	http.HandleFunc("/dashboard", handlers.NewDashboardHandler(tmpl))
 	http.Handle("/metrics", promhttp.Handler())
 	http.Handle("/static/", handler)
+	http.Handle("/api/status", statusHandler)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
