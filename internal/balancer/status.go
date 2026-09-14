@@ -3,9 +3,11 @@ package balancer
 import "time"
 
 type BackendStatus struct {
-	ID      int    `json:"id"`
-	URL     string `json:"url"`
-	Healthy bool   `json:"healthy"`
+	ID             int    `json:"id"`
+	URL            string `json:"url"`
+	Healthy        bool   `json:"healthy"`
+	Requests       int    `json:"requests"`
+	AverageLatency string `json:"average_latency"`
 }
 
 type Status struct {
@@ -29,10 +31,18 @@ func (lb *LoadBalancer) GetStatus() Status {
 		if lb.Backends[i].Alive {
 			alive++
 		}
+		average := time.Duration(0)
+
+		requests := lb.Backends[i].Requests
+		if requests > 0 {
+			average = lb.Backends[i].TotalLatency / time.Duration(requests)
+		}
 		snapshot := BackendStatus{
-			ID:      i,
-			URL:     lb.Backends[i].URL.String(),
-			Healthy: lb.Backends[i].Alive,
+			ID:             i,
+			URL:            lb.Backends[i].URL.String(),
+			Healthy:        lb.Backends[i].Alive,
+			Requests:       requests,
+			AverageLatency: average.String(),
 		}
 
 		status[i] = snapshot

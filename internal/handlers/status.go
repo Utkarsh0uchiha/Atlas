@@ -12,7 +12,7 @@ func NewStatusHandler(lb *balancer.LoadBalancer) http.HandlerFunc {
 		data := lb.GetStatus()
 
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		err := json.NewEncoder(w).Encode(data)
 
 		if err != nil {

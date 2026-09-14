@@ -1,3 +1,4 @@
+console.log("Atlas dashboard JS loaded");
 fetch("/api/status")
     .then(response => response.json())
     .then(data => {
@@ -6,6 +7,8 @@ fetch("/api/status")
             const backendElement = document.getElementById(`backend-${backendData.id}`);
             const status = backendElement.querySelector(".status")
             const statusText = status.querySelector(".status-text")
+            const requests = backendElement.querySelector(".requests")
+            const latency = backendElement.querySelector(".latency")
             if(backendData.healthy){
                 statusText.textContent = "Healthy";
                 status.classList.remove("unhealthy");
@@ -15,5 +18,8 @@ fetch("/api/status")
                 status.classList.remove("healthy");
                 status.classList.add("unhealthy");
             }
+
+            requests.textContent = backendData.requests
+            latency.textContent = backendData.average_latency
         });
     });
