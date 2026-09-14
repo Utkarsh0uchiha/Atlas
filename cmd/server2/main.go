@@ -16,7 +16,7 @@ func main() {
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/health", healthhandler)
 	http.HandleFunc("/kill", func(w http.ResponseWriter, r *http.Request) {
-    	os.Exit(1)
+		os.Exit(1)
 	})
 	http.ListenAndServe(":8082", nil)
 }

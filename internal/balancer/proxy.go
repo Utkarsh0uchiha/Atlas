@@ -30,9 +30,17 @@ func (lb *LoadBalancer) serveWithRetry(w http.ResponseWriter, r *http.Request, i
 		failed = true
 		lb.serveWithRetry(w, r, idx2, attempts+1)
 	}
+
+	backendStart := time.Now()
 	retryProxy.ServeHTTP(w, r)
+	backendLatency := time.Since(backendStart)
 	if !failed {
 		metrics.BackendRequestsTotal.WithLabelValues(backend2.URL.Host).Inc()
+		lb.mu.Lock()
+		lb.Backends[idx2].Requests++
+		lb.Backends[idx2].TotalLatency += backendLatency
+		lb.mu.Unlock()
+
 	}
 }
 
@@ -57,10 +65,16 @@ func (lb *LoadBalancer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		failed = true
 		lb.serveWithRetry(w, r, idx, 1)
 	}
-	proxy.ServeHTTP(w, r)
 
+	backendStart := time.Now()
+	proxy.ServeHTTP(w, r)
+	backendLatency := time.Since(backendStart)
 	if !failed {
 		metrics.BackendRequestsTotal.WithLabelValues(backend.URL.Host).Inc()
+		lb.mu.Lock()
+		lb.Backends[idx].Requests++
+		lb.Backends[idx].TotalLatency += backendLatency
+		lb.mu.Unlock()
 	}
 
 }

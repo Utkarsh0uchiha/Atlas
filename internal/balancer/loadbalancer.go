@@ -25,6 +25,6 @@ func New(backend []backend.Backend) *LoadBalancer {
 			Timeout: 2 * time.Second,
 		},
 		totalRequests: 0,
-		startTime: time.Now(),
+		startTime:     time.Now(),
 	}
 }
