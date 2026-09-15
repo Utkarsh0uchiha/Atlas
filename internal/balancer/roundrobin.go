@@ -15,7 +15,7 @@ func (lb *LoadBalancer) NextBackend() (backend.Backend, int, error) {
 
 		idx := (lb.Current + i) % n
 
-		if lb.Backends[idx].Alive {
+		if lb.Backends[idx].Alive && lb.Backends[idx].Enabled {
 			lb.Current = (idx + 1) % n
 
 			return lb.Backends[idx], idx, nil
