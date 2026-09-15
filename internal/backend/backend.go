@@ -6,9 +6,9 @@ import (
 )
 
 type Backend struct {
-	URL   *url.URL
-	Alive bool
-
+	URL          *url.URL
+	Alive        bool
+	Enabled      bool
 	Requests     int
 	TotalLatency time.Duration
 }

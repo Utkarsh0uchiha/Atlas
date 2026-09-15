@@ -41,9 +41,9 @@ func main() {
 		panic(err)
 	}
 	backends := []backend.Backend{
-		{URL: b1url, Alive: true},
-		{URL: b2url, Alive: true},
-		{URL: b3url, Alive: true},
+		{URL: b1url, Alive: true, Enabled: true},
+		{URL: b2url, Alive: true, Enabled: true},
+		{URL: b3url, Alive: true, Enabled: true},
 	}
 
 	tmpl, err := template.ParseFiles("web/templates/dashboard.html")
@@ -56,10 +56,11 @@ func main() {
 	lb.StartHealthChecker(5 * time.Second)
 
 	statusHandler := handlers.NewStatusHandler(lb)
+	disableHandler := handlers.NewDisableBackendHandler(lb)
+	enableHandler := handlers.NewEnableBackendHandler(lb)
+
 	filesystem := http.Dir("web/static")
-
 	fileserver := http.FileServer(filesystem)
-
 	handler := http.StripPrefix("/static", fileserver)
 
 	http.Handle("/", lb)
@@ -67,6 +68,8 @@ func main() {
 	http.Handle("/metrics", promhttp.Handler())
 	http.Handle("/static/", handler)
 	http.Handle("/api/status", statusHandler)
+	http.Handle("/api/backends/{id}/disable", disableHandler)
+	http.Handle("/api/backends/{id}/enable", enableHandler)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
