@@ -6,6 +6,7 @@ type BackendStatus struct {
 	ID             int    `json:"id"`
 	URL            string `json:"url"`
 	Healthy        bool   `json:"healthy"`
+	Enabled        bool   `json:"enabled"`
 	Requests       int    `json:"requests"`
 	AverageLatency string `json:"average_latency"`
 }
@@ -41,6 +42,7 @@ func (lb *LoadBalancer) GetStatus() Status {
 			ID:             i,
 			URL:            lb.Backends[i].URL.String(),
 			Healthy:        lb.Backends[i].Alive,
+			Enabled:        lb.Backends[i].Enabled,
 			Requests:       requests,
 			AverageLatency: average.String(),
 		}
