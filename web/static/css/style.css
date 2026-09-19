@@ -172,6 +172,34 @@ section {
     color: var(--text);
 }
 
+.backend-controls {
+    margin-top: 12px;
+}
+
+.backend-toggle {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    background: var(--panel-2);
+    color: var(--text);
+}
+
+.backend-toggle.disable {
+    color: var(--unhealthy);
+}
+
+.backend-toggle.enable {
+    color: var(--healthy);
+}
+
+.backend-toggle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 footer {
     margin-top: 32px;
     text-align: center;
