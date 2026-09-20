@@ -1,7 +1,42 @@
 console.log("Atlas dashboard JS loaded");
+let trafficInterval = null
+
 fetch("/api/status")
     .then(response => response.json())
     .then(data => {
+        const startTraffic = document.querySelector(".traffic-start")
+        const stopTraffic = document.querySelector(".traffic-stop")
+        
+        startTraffic.addEventListener("click", () => {
+            if (trafficInterval !== null){
+                return 
+            }
+
+            trafficInterval = setInterval(() => {
+                fetch("/")
+                .catch(error => console.error("Traffic request failed:", error))
+            }, 1000)
+
+            startTraffic.disabled = true
+            stopTraffic.disabled = false
+        })
+
+        
+
+        stopTraffic.addEventListener("click", () => {
+            if(trafficInterval === null){
+                return
+            }
+
+            clearInterval(trafficInterval)
+            trafficInterval = null
+
+            startTraffic.disabled = false
+            stopTraffic.disabled = true
+        })
+        
+        startTraffic.disabled = false
+        stopTraffic.disabled = true
 
         data.backends.forEach(backendData => {
             const backendElement = document.getElementById(`backend-${backendData.id}`);
