@@ -41,6 +41,8 @@ func (lb *LoadBalancer) serveWithRetry(w http.ResponseWriter, r *http.Request, i
 		lb.Backends[idx2].TotalLatency += backendLatency
 		lb.mu.Unlock()
 
+		lb.BroadcastStatus()
+
 	}
 }
 
@@ -75,6 +77,8 @@ func (lb *LoadBalancer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		lb.Backends[idx].Requests++
 		lb.Backends[idx].TotalLatency += backendLatency
 		lb.mu.Unlock()
+
+		lb.BroadcastStatus()
 	}
 
 }

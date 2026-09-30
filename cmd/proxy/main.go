@@ -9,6 +9,7 @@ import (
 
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/backend"
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/balancer"
+	"github.com/Utkarsh0uchiha/go-load-balancer/internal/events"
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/handlers"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -52,12 +53,16 @@ func main() {
 	}
 
 	lb := balancer.New(backends)
-	lb.HealthCheck()
-	lb.StartHealthChecker(5 * time.Second)
+	broker := events.NewBroker()
+	lb.SetBroker(broker)
+	lb.HealthCheck(broker)
+	lb.StartHealthChecker(5*time.Second, broker)
+
 
 	statusHandler := handlers.NewStatusHandler(lb)
 	disableHandler := handlers.NewDisableBackendHandler(lb)
 	enableHandler := handlers.NewEnableBackendHandler(lb)
+	sseHandler := handlers.NewSSEHandler(broker)
 
 	filesystem := http.Dir("web/static")
 	fileserver := http.FileServer(filesystem)
@@ -70,6 +75,7 @@ func main() {
 	http.Handle("/api/status", statusHandler)
 	http.Handle("/api/backends/{id}/disable", disableHandler)
 	http.Handle("/api/backends/{id}/enable", enableHandler)
+	http.Handle("/api/events", sseHandler)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
