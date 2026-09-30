@@ -3,10 +3,11 @@ package balancer
 import (
 	"net/http"
 
+	"github.com/Utkarsh0uchiha/go-load-balancer/internal/events"
 	"github.com/Utkarsh0uchiha/go-load-balancer/internal/metrics"
 )
 
-func (lb *LoadBalancer) HealthCheck() {
+func (lb *LoadBalancer) HealthCheck(broker *events.Broker) {
 	healthy := 0
 	for i := range lb.Backends {
 		resp, err := lb.client.Get(lb.Backends[i].URL.String() + "/health")
@@ -29,4 +30,5 @@ func (lb *LoadBalancer) HealthCheck() {
 	}
 
 	metrics.HealthyBackends.Set(float64(healthy))
+	lb.BroadcastStatus()
 }
