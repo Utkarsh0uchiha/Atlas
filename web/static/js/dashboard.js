@@ -47,19 +47,11 @@ fetch("/api/status")
             const toggle = backendElement.querySelector(".backend-toggle")
             
            updateBackendHealth(backendData)
-
-            if(backendData.enabled){
-                        toggle.textContent = "Disable";
-                        toggle.classList.remove("enable");
-                        toggle.classList.add("disable");
-            } else {
-                        toggle.textContent = "Enable";
-                        toggle.classList.remove("disable");
-                        toggle.classList.add("enable");
-            }
+           updateBackendEnabled(backendData)
 
             toggle.addEventListener("click", () => {
-                const action = backendData.enabled ? "disable" : "enable"
+                const enabled = toggle.dataset.enabled === "true"
+                const action = enabled ? "disable" : "enable"
                 const url = `/api/backends/${backendData.id}/${action}`
                 toggle.disabled = true
                 fetch(url, {
@@ -70,18 +62,6 @@ fetch("/api/status")
                         throw new Error("Failed to update backend")
                     }
                     return response.json()
-                })
-                .then(data => {
-                    backendData.enabled = !backendData.enabled
-                    if(backendData.enabled){
-                        toggle.textContent = "Disable";
-                        toggle.classList.remove("enable");
-                        toggle.classList.add("disable");
-                    } else {
-                        toggle.textContent = "Enable";
-                        toggle.classList.remove("disable");
-                        toggle.classList.add("enable");
-                    }
                 })
                 .catch(error => {
                     console.error(error)
@@ -128,6 +108,24 @@ function updateBackendMetrics(backendData) {
     backendElement.querySelector(".latency").textContent = backendData.average_latency
 }
 
+function updateBackendEnabled(backendData) {
+    const backendElement = document.getElementById(`backend-${backendData.id}`)
+    const toggle = backendElement.querySelector(".backend-toggle")
+
+    toggle.dataset.enabled = backendData.enabled
+
+    if (backendData.enabled) {
+        toggle.textContent = "Disable"
+        toggle.classList.remove("enable")
+        toggle.classList.add("disable")
+    } else {
+        toggle.textContent = "Enable"
+        toggle.classList.remove("disable")
+        toggle.classList.add("enable")
+    }
+}
+
+
 const events = new EventSource("/api/events")
 
 
@@ -141,5 +139,6 @@ events.onmessage = (event) => {
     data.backends.forEach(backendData => {
         updateBackendHealth(backendData)
         updateBackendMetrics(backendData)
+        updateBackendEnabled(backendData)
     })
 }

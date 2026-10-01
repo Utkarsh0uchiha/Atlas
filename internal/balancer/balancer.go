@@ -1,6 +1,8 @@
 package balancer
 
-import "errors"
+import (
+	"errors"
+)
 
 func (lb *LoadBalancer) DisableBackend(id int) error {
 	if id < 0 || id >= len(lb.Backends) {
@@ -11,6 +13,7 @@ func (lb *LoadBalancer) DisableBackend(id int) error {
 	lb.Backends[id].Enabled = false
 	lb.mu.Unlock()
 
+	lb.BroadcastStatus()
 	return nil
 }
 func (lb *LoadBalancer) EnableBackend(id int) error {
@@ -22,5 +25,6 @@ func (lb *LoadBalancer) EnableBackend(id int) error {
 	lb.Backends[id].Enabled = true
 	lb.mu.Unlock()
 
+	lb.BroadcastStatus()
 	return nil
 }
